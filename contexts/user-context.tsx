@@ -1,13 +1,9 @@
 import React from "react";
+import { UserContext as UserContextInterface } from "../types/context/user-context.d";
 
-interface UserContext {
-  permissions: {
-    [key: string]: boolean;
-  };
-  handleSetPermissions: (k: string, v: boolean) => void;
-}
-
-export const UserContext = React.createContext<Partial<UserContext>>({});
+export const UserContext = React.createContext<Partial<UserContextInterface>>(
+  {}
+);
 
 const UserContextProvider = ({ children }) => {
   const [permissions, setPermissions] = React.useState({});

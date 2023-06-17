@@ -11,7 +11,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const LoginScreen = ({ navigation }) => {
   const { login } = React.useContext(AuthContext);
@@ -20,28 +20,33 @@ const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = React.useState("user3@gmail.com");
   const [password, setPassword] = React.useState("1234");
 
+  const insets = useSafeAreaInsets();
+
   /** **************************************** */
 
   // render
 
-  const iconEye = ({ style, size }) => {
-    const eyeIcon: IconProp = seePassword
-      ? ["fas", "eye"]
-      : ["fas", "eye-slash"];
+  const iconEye = React.useCallback(
+    ({ style, size }) => {
+      const eyeIcon: IconProp = seePassword
+        ? ["fas", "eye"]
+        : ["fas", "eye-slash"];
 
-    return (
-      <Pressable style={style} onPress={() => setSeePassword(!seePassword)}>
-        <FontAwesomeIcon size={size} icon={eyeIcon} color={Colors.p30} />
-      </Pressable>
-    );
-  };
+      return (
+        <Pressable style={style} onPress={() => setSeePassword(!seePassword)}>
+          <FontAwesomeIcon size={size} icon={eyeIcon} color={Colors.p30} />
+        </Pressable>
+      );
+    },
+    [seePassword]
+  );
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={{ paddingTop: my.insets.top }}>
+      <View style={{ paddingTop: insets.top }}>
         <View style={styles.header}>
           <Common.Text size={24} weight="700" color={Colors.p30}>
             Login

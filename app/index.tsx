@@ -27,19 +27,12 @@ const App = () => {
   // effect
 
   React.useEffect(() => {
-    my.insets = {
-      top: insets.top,
-      bottom: insets.bottom,
-      left: insets.left,
-      right: insets.right,
-    };
-
     my.loading = setLoading;
   }, []);
 
   React.useEffect(() => {
-    if (fontsLoaded) {
-      (async () => {
+    (async () => {
+      if (fontsLoaded) {
         const hasLogged = await storageGet("@has_logged");
         setHasLogged(hasLogged);
 
@@ -50,8 +43,8 @@ const App = () => {
         }
 
         setAppIsReady(true);
-      })();
-    }
+      }
+    })();
   }, [fontsLoaded]);
 
   /** **************************************** */

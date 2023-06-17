@@ -1,15 +1,13 @@
 import React from "react";
-import * as Common from "../../components/common";
-import * as ImagePicker from "expo-image-picker";
-import { AuthContext } from "../../../contexts/auth-context";
-import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import Colors from "../../constants/colors";
-import { Camera, CameraType } from "expo-camera";
+import * as Common from "../../components/common";
 import { FlashList } from "@shopify/flash-list";
-import { Image } from "expo-image";
+import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
+import { abortSignal } from "../../../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { MaterialIndicator } from "react-native-indicators";
-import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, StyleSheet, Pressable, Image } from "react-native";
 
 const AVATAR = require("../../../assets/images/profile2.png");
 const AVATAR_SIZE = 46;
@@ -23,10 +21,16 @@ const HomeScreen = () => {
   const [loading, setLoading] = React.useState(true);
   const [data, setData] = React.useState([]);
 
+  const insets = useSafeAreaInsets();
+
+  /** **************************************** */
+
+  // effect
+
   React.useEffect(() => {
     (async () => {
       try {
-        const { data: json } = await my.api.post("post/get-posts");
+        const { data: json } = await my.api.app.post("post/get-posts");
         if (json.status === "ok") {
           setData(json.data);
         }
@@ -49,9 +53,6 @@ const HomeScreen = () => {
       <Image
         style={postImagesStyles.image}
         source={{ uri: my.url.uploads.posts + item.image }}
-        contentFit="cover"
-        placeholder={item.blurhash}
-        transition={300}
       />
     );
   }, []);
@@ -89,19 +90,19 @@ const HomeScreen = () => {
                 renderItem={renderImage}
               />
 
-              <PostActionsBar data={item} type="images" />
+              <PostActionsBar data={item} type="images" setData={setData} />
             </View>
           </View>
         )}
 
-        <PostActionsBar data={item} type="content" />
+        <PostActionsBar data={item} type="content" setData={setData} />
       </View>
     );
   }, []);
 
   return (
     <View style={styles.container}>
-      <View style={{ zIndex: 1, paddingTop: my.insets.top }}>
+      <View style={[styles.statusBar, { paddingTop: insets.top }]}>
         <View style={styles.header}>
           <Image style={styles.profile} source={AVATAR} />
           <Common.Text size={18} weight="700">
@@ -131,11 +132,11 @@ const HomeScreen = () => {
   );
 };
 
-const PostActionsBar = ({ data, type }) => {
+const PostActionsBar = ({ data, type, setData }) => {
   if (type === "images") {
     return (
       <View style={postActionsBarStyles.container1}>
-        <PostActions data={data} type={type} />
+        <PostActions data={data} type={type} setData={setData} />
       </View>
     );
   }
@@ -144,7 +145,7 @@ const PostActionsBar = ({ data, type }) => {
     if (data.post_images.length < 1) {
       return (
         <View style={postActionsBarStyles.container2}>
-          <PostActions data={data} type={type} />
+          <PostActions data={data} type={type} setData={setData} />
         </View>
       );
     }
@@ -153,30 +154,68 @@ const PostActionsBar = ({ data, type }) => {
   }
 };
 
-const PostActions = ({ data, type }) => {
+const PostActions = ({ data, type, setData }) => {
   /** **************************************** */
 
   // function
 
-  const onLiked = async () => {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 5000);
+  const onLikedOrDisliked = async (type, recursive = false) => {
+    setData((s) => {
+      return s.map((e) => {
+        if (e.id !== data.id) {
+          return e;
+        }
 
-    try {
-      const { data: json } = await my.api.post("post/like-dislike", undefined, {
-        signal: controller.signal,
+        let result = { ...e };
+
+        if (type === "liked") {
+          if (e.is_disliked) {
+            result.is_disliked = false;
+            result.dislikes -= 1;
+          }
+          result.is_liked = !e.is_liked;
+          result.likes += result.is_liked ? +1 : -1;
+        }
+
+        if (type === "disliked") {
+          if (e.is_liked) {
+            result.is_liked = false;
+            result.likes -= 1;
+          }
+          result.is_disliked = !e.is_disliked;
+          result.dislikes += result.is_disliked ? +1 : -1;
+        }
+
+        if (!recursive) {
+          my.api.app
+            .post(
+              "post/liked-disliked",
+              {
+                post_id: result.id,
+                like: result.is_liked,
+                dislike: result.is_disliked,
+              },
+              {
+                signal: abortSignal(5000),
+              }
+            )
+            .then(({ data: json }) => {
+              if (json.status !== "ok") {
+                onLikedOrDisliked(type, true);
+              }
+            })
+            .catch((error) => {
+              if (__DEV__) {
+                console.error(error);
+              }
+
+              onLikedOrDisliked(type, true);
+            });
+        }
+
+        return result;
       });
-
-      console.log("like");
-    } catch (error) {
-      console.log(error.name);
-    } finally {
-      clearTimeout(timeout);
-    }
-  };
-
-  const onDisliked = () => {
-    console.log("dislike");
+    });
   };
 
   /** **************************************** */
@@ -231,7 +270,7 @@ const PostActions = ({ data, type }) => {
           <Common.Text size={14} weight="600" color={disliked.color}>
             {data.dislikes}
           </Common.Text>
-          <Pressable onPress={onDisliked}>
+          <Pressable onPress={() => onLikedOrDisliked("disliked")}>
             <FontAwesomeIcon
               style={postActionsBarStyles.iconWithNumber}
               icon={[disliked.iconType as IconPrefix, "thumbs-down"]}
@@ -244,7 +283,7 @@ const PostActions = ({ data, type }) => {
           <Common.Text size={14} weight="600" color={liked.color}>
             {data.likes}
           </Common.Text>
-          <Pressable onPress={onLiked}>
+          <Pressable onPress={() => onLikedOrDisliked("liked")}>
             <FontAwesomeIcon
               style={postActionsBarStyles.iconWithNumber}
               icon={[liked.iconType as IconPrefix, "thumbs-up"]}
@@ -278,6 +317,9 @@ const styles = StyleSheet.create({
     width: AVATAR_SIZE,
     height: AVATAR_SIZE,
     borderRadius: AVATAR_SIZE * 0.5,
+  },
+  statusBar: {
+    zIndex: 1,
   },
 });
 

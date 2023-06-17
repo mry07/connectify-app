@@ -1,12 +1,14 @@
 import React from "react";
 import Colors from "../../constants/colors";
 import { View, Pressable, StyleSheet, Platform } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const PLUS_SIZE = 64;
 const BOTTOM_TABS_HEIGHT = Platform.OS === "ios" ? 54 : 56;
 
 const BottomTabs = ({ state, descriptors, navigation }) => {
-  const insetBottom = Platform.OS === "ios" ? my.insets.bottom : 0;
+  const insets = useSafeAreaInsets();
+  const insetBottom = Platform.OS === "ios" ? insets.bottom : 0;
 
   return (
     <View

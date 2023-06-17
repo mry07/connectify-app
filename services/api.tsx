@@ -5,12 +5,10 @@ import { storageGet } from "../utils/storage";
 import { AuthContext } from "../contexts/auth-context";
 import { InternalAxiosRequestConfig } from "axios";
 
-export interface ApiRequestConfig extends InternalAxiosRequestConfig {
-  _port?: number;
-}
-
 const Api = ({ children }) => {
   const { getToken } = React.useContext(AuthContext);
+
+  const [showNetworkError, setShowNetworkError] = React.useState(false);
 
   /** **************************************** */
 
@@ -18,8 +16,8 @@ const Api = ({ children }) => {
 
   React.useEffect(() => {
     // instance
-    my.api = Axios.create({
-      baseURL: my.url.endpoint,
+    my.api.app = Axios.create({
+      baseURL: my.url.endpoint.app,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
@@ -29,38 +27,71 @@ const Api = ({ children }) => {
     });
 
     // interceptor request
-    const request = my.api.interceptors.request.use(
+    const request = my.api.app.interceptors.request.use(
       requestInterceptor,
       errorRequestInterceptor
     );
 
     // interceptor response
-    const response = my.api.interceptors.response.use(
+    const response = my.api.app.interceptors.response.use(
       responseInterceptor,
       errorResponseInterceptor
     );
 
     return () => {
-      my.api.interceptors.request.eject(request);
-      my.api.interceptors.response.eject(response);
+      my.api.app.interceptors.request.eject(request);
+      my.api.app.interceptors.response.eject(response);
     };
   }, []);
+
+  React.useEffect(() => {
+    // instance
+    my.api.auth = Axios.create({
+      baseURL: my.url.endpoint.auth,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "User-Agent": "my-app",
+        "Cache-Control": "no-cache",
+      },
+    });
+
+    // interceptor request
+    const request = my.api.auth.interceptors.request.use(
+      requestInterceptor,
+      errorRequestInterceptor
+    );
+
+    // interceptor response
+    const response = my.api.auth.interceptors.response.use(
+      responseInterceptor,
+      errorResponseInterceptor
+    );
+
+    return () => {
+      my.api.auth.interceptors.request.eject(request);
+      my.api.auth.interceptors.response.eject(response);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (showNetworkError) {
+      Alert.alert("Terjadi kesalahan", "Mohon coba beberapa saat lagi", [
+        { text: "Ok", onPress: () => setShowNetworkError(false) },
+      ]);
+    }
+  }, [showNetworkError]);
 
   /** **************************************** */
 
   // function
 
-  const requestInterceptor = async (config: ApiRequestConfig) => {
+  const requestInterceptor = async (config: InternalAxiosRequestConfig) => {
     const token = await getToken(config.url);
 
     config.headers["App-Id"] = await storageGet("@uuid");
-
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    if (config._port === 3021) {
-      config.baseURL = `http://192.168.18.8:${config._port}/api/`;
     }
 
     // log request
@@ -95,10 +126,15 @@ const Api = ({ children }) => {
 
   const errorResponseInterceptor = async (error) => {
     if (error.message === "Network Error") {
-      Alert.alert("Terjadi kesalahan", "Mohon coba beberapa saat lagi", [
-        { text: "Ok" },
-      ]);
-      return;
+      setShowNetworkError(true);
+
+      return Promise.reject(error);
+    }
+
+    // log response
+    if (__DEV__) {
+      console.log("RESPONSE\n\t" + JSON.stringify(error.response?.data));
+      console.log("====================");
     }
 
     switch (error.response?.data?.status) {

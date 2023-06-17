@@ -10,20 +10,33 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
+import { Form } from "../../../types/app/screens/auth/register-screen";
 import { AuthContext } from "../../../contexts/auth-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const RegisterScreen = ({ navigation }) => {
   const { register } = React.useContext(AuthContext);
 
-  const [form, setForm] = React.useState({});
+  const [form, setForm] = React.useState<Partial<Form>>({});
 
-  const onChangeField = (field, value) => {
-    setForm((s) => ({ ...s, [field]: value }));
+  const insets = useSafeAreaInsets();
+
+  /** **************************************** */
+
+  // function
+
+  const onChangeField = (k, v) => {
+    setForm((s) => ({ ...s, [k]: v }));
   };
 
   const onSubmit = async () => {
-    const { status } = await register(form);
+    const { status } = await register(
+      form.name,
+      form.username,
+      form.email,
+      form.password
+    );
     if (status === "ok") {
       Alert.alert("Registrasi Berhasil", "Akun Anda berhasil dibuat", [
         { text: "OK", onPress: () => navigation.goBack() },
@@ -31,12 +44,16 @@ const RegisterScreen = ({ navigation }) => {
     }
   };
 
+  /** **************************************** */
+
+  // render
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={{ paddingTop: my.insets.top }}>
+      <View style={{ paddingTop: insets.top }}>
         <View style={styles.header}>
           <Pressable style={styles.back} onPress={navigation.goBack}>
             <FontAwesomeIcon size={20} icon={["fas", "arrow-left"]} />

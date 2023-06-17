@@ -1,12 +1,16 @@
 import { Dimensions } from "react-native";
 
-my = {
-  url: {
-    endpoint: "http://192.168.18.8:3000/api/v1/",
-    uploads: {
-      posts: "https://192.168.18.8:3000/uploads/posts/",
-    },
-  },
+my = {};
+my.api = {};
+my.url = {};
+
+my.url.endpoint = {
+  app: "http://192.168.18.8:3000/api/v1/",
+  auth: "http://192.168.18.8:3001/api/v1/",
+};
+
+my.url.uploads = {
+  posts: "http://192.168.18.8:3000/uploads/posts/",
 };
 
 SCREEN_HEIGHT = Dimensions.get("screen").height;
