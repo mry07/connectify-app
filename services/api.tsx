@@ -127,27 +127,22 @@ const Api = ({ children }) => {
   const errorResponseInterceptor = async (error) => {
     if (error.message === "Network Error") {
       setShowNetworkError(true);
-
       return Promise.reject(error);
     }
 
-    // log response
-    if (__DEV__) {
-      console.log("RESPONSE\n\t" + JSON.stringify(error.response?.data));
-      console.log("====================");
-    }
+    const responseData = error.response?.data;
+    const status = responseData?.status;
 
-    switch (error.response?.data?.status) {
+    switch (status) {
       case "api_error":
       case "dev_error":
       case "validation_error":
-      case "expired_token_error":
+      case "token_error":
         // log response
         if (__DEV__) {
-          console.log("RESPONSE\n\t" + JSON.stringify(error.response.data));
+          console.log(`RESPONSE\n\t${JSON.stringify(responseData)}`);
           console.log("====================");
         }
-
         return error.response;
 
       default:

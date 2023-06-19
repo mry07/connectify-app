@@ -4,7 +4,7 @@ import { storageClear, storageGet, storageSet } from "../utils/storage";
 import {
   AuthContext as AuthContextInterface,
   JsonWebTokenDecode,
-} from "../types/context/auth-context.d";
+} from "../@types/context/auth-context.d";
 
 export const AuthContext = React.createContext<Partial<AuthContextInterface>>(
   {}

@@ -1,5 +1,5 @@
 import React from "react";
-import { UserContext as UserContextInterface } from "../types/context/user-context.d";
+import { UserContext as UserContextInterface } from "../@types/context/user-context.d";
 
 export const UserContext = React.createContext<Partial<UserContextInterface>>(
   {}

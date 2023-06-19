@@ -6,7 +6,7 @@ const Stack = createStackNavigator();
 
 /** ********************************************************************** */
 
-// SCREENS
+// SCREEN
 
 import Login from "../screens/auth/LoginScreen";
 import Register from "../screens/auth/RegisterScreen";

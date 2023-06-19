@@ -1,15 +1,20 @@
 import React from "react";
-import Colors from "../../constants/colors";
-import * as Common from "../../components/common";
+import Colors from "../../../constants/colors";
+import BottomSheet from "@gorhom/bottom-sheet";
+import * as Common from "../../../components/common";
 import { FlashList } from "@shopify/flash-list";
 import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
-import { abortSignal } from "../../../utils/api";
+import { abortSignal } from "../../../../utils/api";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { MaterialIndicator } from "react-native-indicators";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { View, StyleSheet, Pressable, Image } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { BottomSheetBackdropProps } from "@gorhom/bottom-sheet";
+import { View, StyleSheet, Pressable, Image, Modal } from "react-native";
 
-const AVATAR = require("../../../assets/images/profile2.png");
+import CommentsModal from "./home/__modals__/CommentsModal";
+
+const AVATAR = require("../../../../assets/images/profile2.png");
 const AVATAR_SIZE = 46;
 const POST_AVATAR_SIZE = 43;
 
@@ -18,7 +23,9 @@ const POST_AVATAR_SIZE = 43;
 // COMPONENT
 
 const HomeScreen = () => {
+  const [showComment, setShowComment] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
+  const [postId, setPostId] = React.useState(0);
   const [data, setData] = React.useState([]);
 
   const insets = useSafeAreaInsets();
@@ -42,6 +49,16 @@ const HomeScreen = () => {
         setLoading(false);
       }
     })();
+  }, []);
+
+  /** **************************************** */
+
+  // function
+
+
+  const handleShowBottomSheet = React.useCallback((id: number) => {
+    setShowComment(true);
+    setPostId(id);
   }, []);
 
   /** **************************************** */
@@ -90,12 +107,22 @@ const HomeScreen = () => {
                 renderItem={renderImage}
               />
 
-              <PostActionsBar data={item} type="images" setData={setData} />
+              <PostActionsBar
+                data={item}
+                type="images"
+                setData={setData}
+                onComment={() => handleShowBottomSheet(item.id)}
+              />
             </View>
           </View>
         )}
 
-        <PostActionsBar data={item} type="content" setData={setData} />
+        <PostActionsBar
+          data={item}
+          type="content"
+          setData={setData}
+          onComment={() => handleShowBottomSheet(item.id)}
+        />
       </View>
     );
   }, []);
@@ -128,24 +155,30 @@ const HomeScreen = () => {
           No Posts
         </Common.Text>
       )}
+
+      <CommentsModal
+        visible={showComment}
+        postId={postId}
+        onRequestClose={() => setShowComment(false)}
+      />
     </View>
   );
 };
 
-const PostActionsBar = ({ data, type, setData }) => {
-  if (type === "images") {
+const PostActionsBar = (props) => {
+  if (props.type === "images") {
     return (
       <View style={postActionsBarStyles.container1}>
-        <PostActions data={data} type={type} setData={setData} />
+        <PostActions {...props} />
       </View>
     );
   }
 
-  if (type === "content") {
-    if (data.post_images.length < 1) {
+  if (props.type === "content") {
+    if (props.data.post_images.length < 1) {
       return (
         <View style={postActionsBarStyles.container2}>
-          <PostActions data={data} type={type} setData={setData} />
+          <PostActions {...props} />
         </View>
       );
     }
@@ -154,12 +187,12 @@ const PostActionsBar = ({ data, type, setData }) => {
   }
 };
 
-const PostActions = ({ data, type, setData }) => {
+const PostActions = ({ data, type, setData, onComment }) => {
   /** **************************************** */
 
   // function
 
-  const onLikedOrDisliked = async (type, recursive = false) => {
+  const onLikedOrDisliked = async (action, recursive = false) => {
     setData((s) => {
       return s.map((e) => {
         if (e.id !== data.id) {
@@ -168,7 +201,7 @@ const PostActions = ({ data, type, setData }) => {
 
         let result = { ...e };
 
-        if (type === "liked") {
+        if (action === "liked") {
           if (e.is_disliked) {
             result.is_disliked = false;
             result.dislikes -= 1;
@@ -177,7 +210,7 @@ const PostActions = ({ data, type, setData }) => {
           result.likes += result.is_liked ? +1 : -1;
         }
 
-        if (type === "disliked") {
+        if (action === "disliked") {
           if (e.is_liked) {
             result.is_liked = false;
             result.likes -= 1;
@@ -201,7 +234,7 @@ const PostActions = ({ data, type, setData }) => {
             )
             .then(({ data: json }) => {
               if (json.status !== "ok") {
-                onLikedOrDisliked(type, true);
+                onLikedOrDisliked(action, true);
               }
             })
             .catch((error) => {
@@ -209,7 +242,7 @@ const PostActions = ({ data, type, setData }) => {
                 console.error(error);
               }
 
-              onLikedOrDisliked(type, true);
+              onLikedOrDisliked(action, true);
             });
         }
 
@@ -260,38 +293,54 @@ const PostActions = ({ data, type, setData }) => {
 
   return (
     <View style={postActionsBarStyles.wrapper}>
-      <FontAwesomeIcon
-        icon={["fas", "comment"]}
-        size={18}
-        color={actions.color}
-      />
+      <Pressable
+        style={{
+          paddingHorizontal: 16,
+          paddingVertical: type === "images" ? 12 : 16,
+        }}
+        onPress={() => onComment(data.id)}
+      >
+        <FontAwesomeIcon
+          icon={["fas", "comment"]}
+          size={18}
+          color={actions.color}
+        />
+      </Pressable>
       <View style={postActionsBarStyles.row1}>
-        <View style={postActionsBarStyles.row2}>
+        <Pressable
+          style={[
+            postActionsBarStyles.row2,
+            { paddingVertical: type === "images" ? 12 : 16 },
+          ]}
+          onPress={() => onLikedOrDisliked("disliked")}
+        >
           <Common.Text size={14} weight="600" color={disliked.color}>
             {data.dislikes}
           </Common.Text>
-          <Pressable onPress={() => onLikedOrDisliked("disliked")}>
-            <FontAwesomeIcon
-              style={postActionsBarStyles.iconWithNumber}
-              icon={[disliked.iconType as IconPrefix, "thumbs-down"]}
-              color={disliked.color}
-              size={18}
-            />
-          </Pressable>
-        </View>
-        <View style={postActionsBarStyles.row2}>
+          <FontAwesomeIcon
+            style={postActionsBarStyles.iconWithNumber}
+            icon={[disliked.iconType as IconPrefix, "thumbs-down"]}
+            color={disliked.color}
+            size={18}
+          />
+        </Pressable>
+        <Pressable
+          style={[
+            postActionsBarStyles.row2,
+            { paddingVertical: type === "images" ? 12 : 16 },
+          ]}
+          onPress={() => onLikedOrDisliked("liked")}
+        >
           <Common.Text size={14} weight="600" color={liked.color}>
             {data.likes}
           </Common.Text>
-          <Pressable onPress={() => onLikedOrDisliked("liked")}>
-            <FontAwesomeIcon
-              style={postActionsBarStyles.iconWithNumber}
-              icon={[liked.iconType as IconPrefix, "thumbs-up"]}
-              color={liked.color}
-              size={18}
-            />
-          </Pressable>
-        </View>
+          <FontAwesomeIcon
+            style={postActionsBarStyles.iconWithNumber}
+            icon={[liked.iconType as IconPrefix, "thumbs-up"]}
+            color={liked.color}
+            size={18}
+          />
+        </Pressable>
       </View>
     </View>
   );
@@ -299,7 +348,7 @@ const PostActions = ({ data, type, setData }) => {
 
 /** ********************************************************************** */
 
-// STYLES
+// STYLE
 
 const styles = StyleSheet.create({
   container: {
@@ -387,7 +436,6 @@ const postImagesStyles = StyleSheet.create({
 
 const postActionsBarStyles = StyleSheet.create({
   container1: {
-    padding: 12,
     position: "absolute",
     bottom: 0,
     left: 0,
@@ -395,7 +443,6 @@ const postActionsBarStyles = StyleSheet.create({
     backgroundColor: Colors.white + Colors.o90,
   },
   container2: {
-    padding: 16,
     backgroundColor: Colors.p30,
     marginTop: 16,
   },
@@ -410,11 +457,12 @@ const postActionsBarStyles = StyleSheet.create({
   row1: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 8,
   },
   row2: {
     flexDirection: "row",
     alignItems: "center",
-    marginLeft: 16,
+    paddingHorizontal: 8,
   },
   iconWithNumber: {
     marginLeft: 8,

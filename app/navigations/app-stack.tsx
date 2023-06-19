@@ -11,22 +11,21 @@ import {
 
 /** ********************************************************************** */
 
-// SCREENS
+// SCREEN
 
 import TestScreen from "../screens/__TestScreen__";
 import BlankScreen from "../screens/__BlankScreen__";
 
-import HomeScreen from "../screens/app/HomeScreen";
+import HomeScreen from "../screens/app/bottom-tab/HomeScreen";
 import NewPostScreen from "../screens/app/NewPostScreen";
 
-import ProfileScreen from "../screens/app/ProfileScreen";
+import ProfileScreen from "../screens/app/bottom-tab/ProfileScreen";
 
 /** ********************************************************************** */
 
 // NAVIGATOR
 
 const AStack = createStackNavigator();
-
 const AStackScreen = () => {
   return (
     <AStack.Navigator
@@ -44,7 +43,6 @@ const AStackScreen = () => {
 };
 
 const HomeTab = createBottomTabNavigator();
-
 const HomeTabScreen = () => {
   return (
     <HomeTab.Navigator
@@ -88,7 +86,6 @@ const HomeTabScreen = () => {
 };
 
 const Stack = createStackNavigator();
-
 const AppStack = () => {
   return (
     <Stack.Navigator

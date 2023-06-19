@@ -10,7 +10,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import { Form } from "../../../types/app/screens/auth/register-screen";
+import { Form } from "../../../@types/app/screens/auth/register-screen";
 import { AuthContext } from "../../../contexts/auth-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
