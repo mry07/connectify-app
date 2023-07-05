@@ -29,7 +29,10 @@ export interface CommonTextInputProps extends CommonTextProps {
   iconRigth?: ({ style, size }: IconProps) => React.ReactNode;
 }
 
-const Input: React.FC<CommonTextInputProps & TextInputProps> = (props) => {
+const Input = React.forwardRef<
+  TextInput,
+  CommonTextInputProps & TextInputProps
+>((props, ref) => {
   const fontFamily = fonts[props.font][props.variant][props.weight];
 
   return (
@@ -43,6 +46,7 @@ const Input: React.FC<CommonTextInputProps & TextInputProps> = (props) => {
         {props.iconLeft?.({ style: { marginRight: 8 }, size: 16 })}
         <TextInput
           {...props}
+          ref={ref}
           style={[
             styles.input,
             {
@@ -63,7 +67,7 @@ const Input: React.FC<CommonTextInputProps & TextInputProps> = (props) => {
       )}
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   inputContainer: {

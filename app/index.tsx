@@ -8,19 +8,18 @@ import { StatusBar } from "expo-status-bar";
 import { toUseFonts } from "./constants/fonts";
 import { AuthContext } from "../contexts/auth-context";
 import { View, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { storageGet, storageSet } from "../utils/storage";
+import { UserContext } from "../contexts/user-context";
 
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
-  const { setHasLogged } = React.useContext(AuthContext);
+  const { hasLogged, setHasLogged } = React.useContext(AuthContext);
+  const { getUserDetails } = React.useContext(UserContext);
 
   const [fontsLoaded] = Font.useFonts(toUseFonts);
   const [loading, setLoading] = React.useState(false);
   const [appIsReady, setAppIsReady] = React.useState(false);
-
-  const insets = useSafeAreaInsets();
 
   /** **************************************** */
 
@@ -36,20 +35,38 @@ const App = () => {
         const hasLogged = await storageGet("@has_logged");
         setHasLogged(hasLogged);
 
-        let uuid = await storageGet("@uuid");
-        if (!uuid) {
-          uuid = Crypto.randomUUID();
-          await storageSet("@uuid", uuid);
-        }
+        await setUUID();
 
         setAppIsReady(true);
       }
     })();
   }, [fontsLoaded]);
 
+  React.useEffect(() => {
+    (async () => {
+      if (hasLogged) {
+        await getUserDetails();
+      }
+    })();
+  }, [hasLogged]);
+
   /** **************************************** */
 
   // function
+
+  const setUUID = async () => {
+    try {
+      const uuid = await storageGet("@uuid");
+      if (!uuid) {
+        const newUUID = Crypto.randomUUID();
+        await storageSet("@uuid", newUUID);
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.error("Error setting UUID:", error);
+      }
+    }
+  };
 
   const onLayoutRootView = React.useCallback(async () => {
     if (appIsReady) {

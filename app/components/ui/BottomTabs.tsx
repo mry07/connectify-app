@@ -8,15 +8,14 @@ const BOTTOM_TABS_HEIGHT = Platform.OS === "ios" ? 54 : 56;
 
 const BottomTabs = ({ state, descriptors, navigation }) => {
   const insets = useSafeAreaInsets();
-  const insetBottom = Platform.OS === "ios" ? insets.bottom : 0;
 
   return (
     <View
       style={[
         styles.container,
         {
-          height: BOTTOM_TABS_HEIGHT + insetBottom,
-          paddingBottom: insetBottom,
+          paddingBottom: insets.bottom,
+          height: BOTTOM_TABS_HEIGHT + insets.bottom,
         },
       ]}
     >

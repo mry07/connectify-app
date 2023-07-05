@@ -10,6 +10,7 @@ my.url.endpoint = {
 };
 
 my.url.uploads = {
+  avatars: "http://192.168.18.8:3000/uploads/avatars/",
   posts: "http://192.168.18.8:3000/uploads/posts/",
 };
 

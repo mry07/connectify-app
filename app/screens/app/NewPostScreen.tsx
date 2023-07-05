@@ -15,13 +15,14 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
+  Alert,
 } from "react-native";
 // import { FlashList } from "@shopify/flash-list";
 
 const IMAGE_HEIGHT = 210;
 
 const NewPostScreen = ({ navigation }) => {
-  const { permissions, handleSetPermissions } = React.useContext(UserContext);
+  const { permissions, toSetPermissions } = React.useContext(UserContext);
 
   // const [measureInput, setMeasureInput] = React.useState(null);
   const [content, setContent] = React.useState("");
@@ -38,11 +39,11 @@ const NewPostScreen = ({ navigation }) => {
       (async () => {
         const { status: cameraStatus } =
           await ImagePicker.requestCameraPermissionsAsync();
-        handleSetPermissions("camera", cameraStatus === "granted");
+        toSetPermissions("camera", cameraStatus === "granted");
 
         const { status: mediaLibraryStaus } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
-        handleSetPermissions("mediaLibrary", mediaLibraryStaus === "granted");
+        toSetPermissions("mediaLibrary", mediaLibraryStaus === "granted");
       })();
     }, 1000);
 
@@ -74,24 +75,39 @@ const NewPostScreen = ({ navigation }) => {
   };
 
   const onSubmitNewPost = async () => {
+    my.loading(true);
+
+    const form = new FormData();
+    form.append("content", content);
+
+    for (let i = 0; i < images.length; i++) {
+      const name = images[i].uri.split("/").pop();
+      const extension = images[i].uri.split(".").pop();
+      form.append("images", {
+        name,
+        uri: images[i].uri,
+        type: images[i].type + "/" + extension,
+      } as any);
+    }
+
     try {
-      my.loading(true);
-
-      const form = new FormData();
-      form.append("content", content);
-
-      for (let i = 0; i < images.length; i++) {
-        const name = images[i].uri.split("/").pop();
-        const extension = images[i].uri.split(".").pop();
-        form.append("images", {
-          name,
-          uri: images[i].uri,
-          type: images[i].type + "/" + extension,
-        } as any);
+      const { data: json } = await my.api.app.postForm("post/new-post", form, {
+        onUploadProgress: (e) => {
+          const progress = Math.round((e.loaded / e.total) * 100);
+          console.log(progress);
+        },
+      });
+      if (json.status === "ok") {
+        navigation.goBack();
+      } else {
+        if (json.status === "api_error") {
+          Alert.alert("Gagal", json.message);
+        }
       }
-
-      await my.api.postForm("post/new-post", form);
     } catch (error) {
+      if (__DEV__) {
+        console.log(error);
+      }
     } finally {
       my.loading(false);
     }

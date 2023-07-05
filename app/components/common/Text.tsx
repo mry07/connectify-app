@@ -5,7 +5,7 @@ import { StyleProp, Text as RNText, TextProps, TextStyle } from "react-native";
 
 type FontFamily = "poppins" | "nunito";
 type FontStyle = "normal" | "italic";
-type FontWeight =
+export type FontWeight =
   | "100"
   | "200"
   | "300"

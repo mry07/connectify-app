@@ -1,5 +1,5 @@
 import React from "react";
-import Text from "./Text";
+import Text, { FontWeight } from "./Text";
 import Colors from "../../constants/colors";
 import { Pressable, ViewStyle, StyleSheet, PressableProps } from "react-native";
 
@@ -9,6 +9,10 @@ interface CommonButtonProps {
   style?: ViewStyle;
   title?: string;
   size?: TSize;
+  titleStyle?: {
+    color?: string;
+    weight?: FontWeight;
+  };
   iconLeft?: ({ style, size }: IconProps) => React.ReactNode;
   iconRight?: ({ style, size }: IconProps) => React.ReactNode;
 }
@@ -20,12 +24,16 @@ interface IconProps {
 
 const DEFAULT_COMMON_BUTTON_PROPS: CommonButtonProps = {
   size: "medium",
+  titleStyle: {
+    color: Colors.p60,
+    weight: "400",
+  },
   iconLeft: () => null,
   iconRight: () => null,
 };
 
 const Button: React.FC<CommonButtonProps & PressableProps> = (props) => {
-  const { style, title, size, iconLeft, iconRight } = props;
+  const { style, title, titleStyle, size, iconLeft, iconRight } = props;
 
   const customize = React.useMemo(() => {
     let textSize: number;
@@ -116,7 +124,12 @@ const Button: React.FC<CommonButtonProps & PressableProps> = (props) => {
       style={[styles.container, customize.buttonStyle, style]}
     >
       {iconLeft(customize.iconProps)}
-      <Text style={styles.text} size={customize.textSize} color={Colors.p60}>
+      <Text
+        style={styles.text}
+        size={customize.textSize}
+        color={titleStyle.color}
+        weight={titleStyle.weight}
+      >
         {title}
       </Text>
       {iconRight(customize.iconProps)}

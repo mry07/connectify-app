@@ -1,19 +1,36 @@
 import React from "react";
-import { UserContext as UserContextInterface } from "../@types/context/user-context.d";
+import { Context } from "../@types/context/user-context.d";
 
-export const UserContext = React.createContext<Partial<UserContextInterface>>(
-  {}
-);
+export const UserContext = React.createContext<Partial<Context>>({});
 
 const UserContextProvider = ({ children }) => {
+  const [loading, setLoading] = React.useState({});
+  const [userDetails, setUserDetails] = React.useState(null);
   const [permissions, setPermissions] = React.useState({});
 
   /** **************************************** */
 
   // function
 
-  const handleSetPermissions = (k, v) => {
+  const toSetPermissions = (k, v) => {
     setPermissions((s) => ({ ...s, [k]: v }));
+  };
+
+  const getUserDetails = async () => {
+    setLoading((s) => ({ ...s, userDetails: true }));
+
+    try {
+      const { data: json } = await my.api.app.post("user/details");
+      if (json.status === "ok") {
+        setUserDetails(json.data);
+      }
+    } catch (error) {
+      if (__DEV__) {
+        console.error(error);
+      }
+    } finally {
+      setLoading((s) => ({ ...s, userDetails: true }));
+    }
   };
 
   /** **************************************** */
@@ -23,9 +40,12 @@ const UserContextProvider = ({ children }) => {
   const value = React.useMemo(
     () => ({
       permissions,
-      handleSetPermissions,
+      userDetails,
+      toSetPermissions,
+      getUserDetails,
+      loading,
     }),
-    [permissions]
+    [permissions, userDetails]
   );
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

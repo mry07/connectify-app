@@ -1,5 +1,6 @@
 {
   "expo": {
+    "owner": "mry07",
     "name": "My App",
     "slug": "my-rn-app",
     "version": "0.1.0",

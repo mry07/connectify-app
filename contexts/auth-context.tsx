@@ -1,14 +1,9 @@
 import React from "react";
-import JWTDecode from "jwt-decode";
+import TokenDecode from "jwt-decode";
 import { storageClear, storageGet, storageSet } from "../utils/storage";
-import {
-  AuthContext as AuthContextInterface,
-  JsonWebTokenDecode,
-} from "../@types/context/auth-context.d";
+import { Context, JsonWebTokenDecode } from "../@types/context/auth-context.d";
 
-export const AuthContext = React.createContext<Partial<AuthContextInterface>>(
-  {}
-);
+export const AuthContext = React.createContext<Partial<Context>>({});
 
 const AuthContextProvider = ({ children }) => {
   const [hasLogged, setHasLogged] = React.useState(false);
@@ -33,7 +28,9 @@ const AuthContextProvider = ({ children }) => {
         setHasLogged(true);
       }
     } catch (error) {
-      // console.error(error);
+      if (__DEV__) {
+        console.error(error);
+      }
     } finally {
       my.loading(false);
     }
@@ -41,6 +38,7 @@ const AuthContextProvider = ({ children }) => {
 
   const logout = async () => {
     my.loading(true);
+
     try {
       const { data: json } = await my.api.auth.delete("auth/logout");
       if (json.status === "ok") {
@@ -49,7 +47,9 @@ const AuthContextProvider = ({ children }) => {
         setHasLogged(false);
       }
     } catch (error) {
-      // console.error(error);
+      if (__DEV__) {
+        console.error(error);
+      }
     } finally {
       my.loading(false);
     }
@@ -75,10 +75,10 @@ const AuthContextProvider = ({ children }) => {
 
   const getToken = async (url) => {
     const token = await storageGet("@token");
-    const refreshToken = await storageGet("@refresh_token");
 
     if (token && url !== "auth/refresh-token") {
-      const decodedToken = JWTDecode(token) as JsonWebTokenDecode;
+      const refreshToken = await storageGet("@refresh_token");
+      const decodedToken = TokenDecode(token) as JsonWebTokenDecode;
       const currentTimeInSeconds = Date.now() / 1000;
 
       if (decodedToken.exp < currentTimeInSeconds) {

@@ -1,6 +1,11 @@
-export interface UserContext {
+export interface Context {
+  userDetails: any;
   permissions: {
     [key: string]: boolean;
   };
-  handleSetPermissions: (k: string, v: boolean) => void;
+  loading: {
+    [key: string]: boolean;
+  };
+  toSetPermissions: (k: string, v: boolean) => void;
+  getUserDetails: () => void;
 }

@@ -11,6 +11,7 @@ interface Url {
     auth: string;
   };
   uploads?: {
+    avatars: string;
     posts: string;
   };
 }

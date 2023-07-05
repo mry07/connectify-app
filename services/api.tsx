@@ -1,12 +1,12 @@
 import React from "react";
 import Axios from "axios";
 import { Alert } from "react-native";
-import { storageGet } from "../utils/storage";
 import { AuthContext } from "../contexts/auth-context";
+import { storageClear, storageGet } from "../utils/storage";
 import { InternalAxiosRequestConfig } from "axios";
 
 const Api = ({ children }) => {
-  const { getToken } = React.useContext(AuthContext);
+  const { getToken, setHasLogged } = React.useContext(AuthContext);
 
   const [showNetworkError, setShowNetworkError] = React.useState(false);
 
@@ -21,7 +21,7 @@ const Api = ({ children }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "User-Agent": "my-app",
+        "User-Agent": "connectify-app",
         "Cache-Control": "no-cache",
       },
     });
@@ -51,7 +51,7 @@ const Api = ({ children }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        "User-Agent": "my-app",
+        "User-Agent": "connectify-app",
         "Cache-Control": "no-cache",
       },
     });
@@ -130,8 +130,8 @@ const Api = ({ children }) => {
       return Promise.reject(error);
     }
 
-    const responseData = error.response?.data;
-    const status = responseData?.status;
+    const data = error.response?.data;
+    const status = data?.status;
 
     switch (status) {
       case "api_error":
@@ -140,9 +140,16 @@ const Api = ({ children }) => {
       case "token_error":
         // log response
         if (__DEV__) {
-          console.log(`RESPONSE\n\t${JSON.stringify(responseData)}`);
+          console.log(`RESPONSE\n\t${JSON.stringify(data)}`);
           console.log("====================");
         }
+
+        if (status === "dev_error" && data?.error_code === "relogin_required") {
+          await storageClear(["@uuid"]);
+
+          setHasLogged(false);
+        }
+
         return error.response;
 
       default:
