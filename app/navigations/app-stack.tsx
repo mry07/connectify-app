@@ -2,7 +2,10 @@ import React from "react";
 import Colors from "../constants/colors";
 import BottomTabs from "../components/ui/BottomTabs";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  createBottomTabNavigator,
+  BottomTabNavigationOptions,
+} from "@react-navigation/bottom-tabs";
 import {
   TransitionPresets,
   createStackNavigator,
@@ -44,15 +47,18 @@ const AStackScreen = () => {
 
 const HomeTab = createBottomTabNavigator();
 const HomeTabScreen = () => {
+  const screenOptions: BottomTabNavigationOptions = {
+    headerShown: false,
+    tabBarActiveTintColor: Colors.p30,
+    tabBarInactiveTintColor: Colors.p30 + Colors.o20,
+    unmountOnBlur: true,
+  };
+
   return (
     <HomeTab.Navigator
       tabBar={(props) => <BottomTabs {...props} />}
       initialRouteName="A"
-      screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: Colors.p30,
-        tabBarInactiveTintColor: Colors.p30 + Colors.o20,
-      }}
+      screenOptions={screenOptions}
     >
       <HomeTab.Screen
         name="A"

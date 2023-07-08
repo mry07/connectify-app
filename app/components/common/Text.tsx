@@ -21,6 +21,7 @@ export interface CommonTextProps {
   color?: string;
   font?: FontFamily;
   size?: number;
+  align?: "left" | "center" | "right";
   weight?: FontWeight;
   variant?: FontStyle;
 }
@@ -48,6 +49,7 @@ const Text: React.FC<CommonTextProps & TextProps> = (props) => {
           fontFamily,
           color: props.color,
           fontSize: props.size,
+          textAlign: props.align,
           includeFontPadding: false,
         },
         props.style,
