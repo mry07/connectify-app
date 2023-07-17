@@ -94,7 +94,7 @@ const CommentsModal = (props: CommentsModalProps) => {
       const { data: json } = await my.api.app.post("post/get-comments", {
         post_id: props.postId,
         pagination: {
-          limit: 10,
+          limit: 20,
           last_id: 0,
         },
       });

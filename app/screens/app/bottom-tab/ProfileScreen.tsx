@@ -41,7 +41,6 @@ const ProfileScreen = () => {
   const [data, setData] = React.useState([]);
 
   const insets = useSafeAreaInsets();
-  const uri = my.url.uploads.avatars + userDetails?.avatar;
 
   React.useEffect(() => {
     (async () => {
@@ -64,6 +63,8 @@ const ProfileScreen = () => {
   };
 
   const listHeader = React.useCallback(() => {
+    const uri = my.url.uploads.avatars + userDetails?.avatar;
+
     return (
       <View style={{ marginVertical: 32 }}>
         <Image
@@ -127,7 +128,7 @@ const ProfileScreen = () => {
         </View>
       </View>
     );
-  }, []);
+  }, [userDetails]);
 
   const renderItem = React.useCallback(
     ({ item }) => {
