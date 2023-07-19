@@ -6,8 +6,8 @@ const LoadingModal = ({ visible }) => {
   return (
     <Modal
       visible={visible}
-      animationType="fade"
       transparent
+      animationType="fade"
       statusBarTranslucent
     >
       <View style={styles.container}>

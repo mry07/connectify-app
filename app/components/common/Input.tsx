@@ -1,8 +1,7 @@
-import Text from "./Text";
+import { Text } from "./Text";
 import React from "react";
 import Colors from "../../constants/colors";
 import { fonts } from "../../constants/fonts";
-import { CommonTextProps, DEFAULT_COMMON_TEXT_PROPS } from "./Text";
 import {
   View,
   ViewStyle,
@@ -11,15 +10,15 @@ import {
   StyleProp,
   StyleSheet,
   TextInputProps,
-  Platform,
 } from "react-native";
+import { TextProps } from "./types/text";
 
 interface IconProps {
   style?: ViewStyle;
   size?: number;
 }
 
-export interface CommonTextInputProps extends CommonTextProps {
+export interface CommonTextInputProps extends TextProps {
   containerStyle?: StyleProp<ViewStyle>;
   inputContainerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
@@ -29,7 +28,15 @@ export interface CommonTextInputProps extends CommonTextProps {
   iconRigth?: ({ style, size }: IconProps) => React.ReactNode;
 }
 
-const Input = React.forwardRef<
+const DEFAULT_PROPS: TextProps = {
+  color: Colors.p101,
+  font: "poppins",
+  variant: "normal",
+  weight: "400",
+  size: 14,
+};
+
+export const Input = React.forwardRef<
   TextInput,
   CommonTextInputProps & TextInputProps
 >((props, ref) => {
@@ -94,5 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-Input.defaultProps = DEFAULT_COMMON_TEXT_PROPS;
-export default Input;
+Input.defaultProps = DEFAULT_PROPS;

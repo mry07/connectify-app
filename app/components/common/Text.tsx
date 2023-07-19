@@ -1,64 +1,45 @@
 import React from "react";
 import Colors from "../../constants/colors";
 import { fonts } from "../../constants/fonts";
-import { StyleProp, Text as RNText, TextProps, TextStyle } from "react-native";
+import { TextProps } from "./types/text";
+import { StyleProp, Text as RNText, TextStyle } from "react-native";
 
-type FontFamily = "poppins" | "nunito";
-type FontStyle = "normal" | "italic";
-export type FontWeight =
-  | "100"
-  | "200"
-  | "300"
-  | "400"
-  | "500"
-  | "600"
-  | "700"
-  | "800"
-  | "900";
-
-export interface CommonTextProps {
-  style?: StyleProp<TextStyle>;
-  color?: string;
-  font?: FontFamily;
-  size?: number;
-  align?: "left" | "center" | "right";
-  weight?: FontWeight;
-  variant?: FontStyle;
-}
-
-export const DEFAULT_COMMON_TEXT_PROPS: CommonTextProps = {
-  color: Colors.p101,
-  font: "poppins",
-  variant: "normal",
-  weight: "400",
+const DEFAULT_PROPS: TextProps = {
   size: 14,
+  font: "poppins",
+  weight: "400",
+  variant: "normal",
+  color: Colors.p101,
 };
 
-const Text: React.FC<CommonTextProps & TextProps> = (props) => {
-  const fontFamily = fonts[props.font][props.variant][props.weight];
+export const Text = ({
+  style,
+  size,
+  color,
+  font,
+  weight,
+  variant,
+  align,
+  children,
+}: TextProps) => {
+  const fontFamily = fonts[font][variant][weight];
 
   if (!fontFamily) {
-    console.warn(`Unknown font or variant or weight: ${props.font}`);
+    console.warn(`Unknown font or variant or weight: ${font}`);
   }
 
-  return (
-    <RNText
-      {...props}
-      style={[
-        {
-          fontFamily,
-          color: props.color,
-          fontSize: props.size,
-          textAlign: props.align,
-          includeFontPadding: false,
-        },
-        props.style,
-      ]}
-    >
-      {props.children}
-    </RNText>
-  );
+  const textStyle: StyleProp<TextStyle> = [
+    {
+      fontFamily,
+      color: color,
+      fontSize: size,
+      textAlign: align,
+      includeFontPadding: false,
+    },
+    style,
+  ];
+
+  return <RNText style={textStyle}>{children}</RNText>;
 };
 
-Text.defaultProps = DEFAULT_COMMON_TEXT_PROPS;
-export default Text;
+Text.defaultProps = DEFAULT_PROPS;
