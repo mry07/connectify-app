@@ -1,5 +1,3 @@
-import { Form as RegisterForm } from "../app/screens/auth/register-screen";
-
 export interface Context {
   hasLogged: boolean;
   setHasLogged: (value: boolean) => void;

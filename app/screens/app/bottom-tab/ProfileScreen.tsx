@@ -13,7 +13,6 @@ import { AuthContext } from "../../../../contexts/auth-context";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { UserContext } from "../../../../contexts/user-context";
-import { FontWeight } from "../../../components/common/Text";
 import Animated, {
   interpolate,
   useSharedValue,
@@ -24,6 +23,7 @@ import Animated, {
 import { abortSignal } from "../../../../utils/api";
 import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import CommentsModal from "./home/__modals__/CommentsModal";
+import { FontWeight } from "../../../components/common/Text.types";
 
 const AVATAR_SIZE = WINDOW_WIDTH * 0.3;
 const BUTTON_LOGOUT = 46;

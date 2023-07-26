@@ -1,7 +1,7 @@
 import React from "react";
 import TokenDecode from "jwt-decode";
+import { Context, JsonWebTokenDecode } from "./auth-context.types";
 import { storageClear, storageGet, storageSet } from "../utils/storage";
-import { Context, JsonWebTokenDecode } from "../@types/context/auth-context.d";
 
 export const AuthContext = React.createContext<Partial<Context>>({});
 
