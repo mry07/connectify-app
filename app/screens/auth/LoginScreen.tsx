@@ -27,16 +27,12 @@ const LoginScreen = ({ navigation }) => {
   // render
 
   const iconEye = React.useCallback(
-    ({ style, size }) => {
+    ({ size }) => {
       const eyeIcon: IconProp = seePassword
         ? ["fas", "eye"]
         : ["fas", "eye-slash"];
 
-      return (
-        <Pressable style={style} onPress={() => setSeePassword(!seePassword)}>
-          <FontAwesomeIcon size={size} icon={eyeIcon} color={Colors.p30} />
-        </Pressable>
-      );
+      return <FontAwesomeIcon size={size} icon={eyeIcon} color={Colors.p30} />;
     },
     [seePassword]
   );
@@ -71,7 +67,8 @@ const LoginScreen = ({ navigation }) => {
           autoCapitalize="none"
           secureTextEntry={!seePassword}
           onChangeText={setPassword}
-          iconRigth={iconEye}
+          onIconRightPress={() => setSeePassword((s) => !s)}
+          iconRight={iconEye}
         />
         <Common.Button
           style={styles.button}

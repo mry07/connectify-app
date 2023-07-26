@@ -1,80 +1,123 @@
-import { Text } from "./Text";
 import React from "react";
 import Colors from "../../constants/colors";
-import { fonts } from "../../constants/fonts";
+import { Text } from "./Text";
+import { InputProps } from "./Input.types";
 import {
   View,
-  ViewStyle,
-  TextStyle,
   TextInput,
   StyleProp,
+  TextStyle,
+  Pressable,
+  ViewStyle,
   StyleSheet,
-  TextInputProps,
 } from "react-native";
-import { TextProps } from "./types/text";
+import { fonts } from "../../constants/fonts";
 
-interface IconProps {
-  style?: ViewStyle;
-  size?: number;
-}
+const INPUT_HEIGHT = 48;
 
-export interface CommonTextInputProps extends TextProps {
-  containerStyle?: StyleProp<ViewStyle>;
-  inputContainerStyle?: StyleProp<ViewStyle>;
-  inputStyle?: StyleProp<TextStyle>;
-  label?: string;
-  error?: string;
-  iconLeft?: ({ style, size }: IconProps) => React.ReactNode;
-  iconRigth?: ({ style, size }: IconProps) => React.ReactNode;
-}
-
-const DEFAULT_PROPS: TextProps = {
-  color: Colors.p101,
-  font: "poppins",
-  variant: "normal",
-  weight: "400",
+const DEFAULT_PROPS: InputProps = {
   size: 14,
+  font: "poppins",
+  weight: "400",
+  variant: "normal",
+  color: Colors.p101,
 };
 
-export const Input = React.forwardRef<
-  TextInput,
-  CommonTextInputProps & TextInputProps
->((props, ref) => {
-  const fontFamily = fonts[props.font][props.variant][props.weight];
+export const Input = React.forwardRef<TextInput, InputProps>(
+  (
+    {
+      containerStyle,
+      inputContainerStyle,
+      inputStyle,
+      label,
+      error,
+      font,
+      variant,
+      weight,
+      color,
+      size,
+      onIconLeftPress,
+      onIconRightPress,
+      iconLeft,
+      iconRight,
+      ...props
+    },
+    ref
+  ) => {
+    const fontFamily = fonts[font][variant][weight];
+
+    const textInputContainerStyle: StyleProp<ViewStyle> = [
+      styles.inputContainer,
+      { paddingLeft: !iconLeft ? 16 : 0, paddingRight: !iconRight ? 16 : 0 },
+      inputContainerStyle,
+    ];
+
+    const textInputStyle: StyleProp<TextStyle> = [
+      styles.input,
+      { fontFamily, color, fontSize: size },
+      inputStyle,
+    ];
+
+    const iconLeftStyle: StyleProp<ViewStyle> = [
+      styles.iconLeft,
+      { paddingLeft: !iconLeft ? 0 : 16 },
+    ];
+
+    const iconRightStyle: StyleProp<ViewStyle> = [
+      styles.iconRight,
+      { paddingRight: !iconRight ? 0 : 16 },
+    ];
+
+    return (
+      <View style={containerStyle}>
+        <InputLabel text={label} />
+        <View style={textInputContainerStyle}>
+          {iconLeft && (
+            <Pressable style={iconLeftStyle} onPress={onIconLeftPress}>
+              {iconLeft({ size: 16 })}
+            </Pressable>
+          )}
+          <TextInput
+            {...props}
+            ref={ref}
+            style={textInputStyle}
+            placeholderTextColor={Colors.p101 + Colors.o30}
+          />
+          {iconRight && (
+            <Pressable style={iconRightStyle} onPress={onIconRightPress}>
+              {iconRight({ size: 16 })}
+            </Pressable>
+          )}
+        </View>
+        <InputError text={error} />
+      </View>
+    );
+  }
+);
+
+const InputLabel = ({ text }) => {
+  if (!text) {
+    return null;
+  }
 
   return (
-    <View style={props.containerStyle}>
-      {!!props.label && (
-        <Text style={styles.label} size={12} weight="500">
-          {props.label}
-        </Text>
-      )}
-      <View style={[styles.inputContainer, props.inputContainerStyle]}>
-        {props.iconLeft?.({ style: { marginRight: 8 }, size: 16 })}
-        <TextInput
-          {...props}
-          ref={ref}
-          style={[
-            styles.input,
-            {
-              fontFamily,
-              color: props.color,
-              fontSize: props.size,
-            },
-            props.inputStyle,
-          ]}
-          placeholderTextColor={Colors.p101 + Colors.o30}
-        />
-        {props.iconRigth?.({ style: { marginLeft: 8 }, size: 16 })}
-      </View>
-      {!!props.error && (
-        <Text style={styles.error} size={12} color={Colors.red400}>
-          {props.error}
-        </Text>
-      )}
-    </View>
+    <Text style={styles.label} size={12} weight="500">
+      {text}
+    </Text>
   );
-});
+};
+
+const InputError = ({ text }) => {
+  if (!text) {
+    return null;
+  }
+
+  return (
+    <Text style={styles.error} size={12} color={Colors.red400}>
+      {text}
+    </Text>
+  );
+};
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -82,14 +125,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: Colors.white,
     borderRadius: 8,
-    paddingHorizontal: 16,
+    height: INPUT_HEIGHT,
+    overflow: "hidden",
   },
   input: {
     flex: 1,
-    // paddingVertical: Platform.OS === "ios" ? 12 : 8,
     includeFontPadding: false,
-    paddingTop: 12,
-    paddingBottom: 12,
+    height: "100%",
+  },
+  iconLeft: {
+    paddingRight: 8,
+    height: "100%",
+    justifyContent: "center",
+  },
+  iconRight: {
+    paddingLeft: 8,
+    height: "100%",
+    justifyContent: "center",
   },
   label: {
     marginLeft: 4,

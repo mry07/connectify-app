@@ -1,7 +1,7 @@
 import React from "react";
 import Colors from "../../constants/colors";
 import { fonts } from "../../constants/fonts";
-import { TextProps } from "./types/text";
+import { TextProps } from "./Text.types";
 import { StyleProp, Text as RNText, TextStyle } from "react-native";
 
 const DEFAULT_PROPS: TextProps = {
@@ -15,11 +15,11 @@ const DEFAULT_PROPS: TextProps = {
 export const Text = ({
   style,
   size,
-  color,
   font,
+  color,
+  align,
   weight,
   variant,
-  align,
   children,
 }: TextProps) => {
   const fontFamily = fonts[font][variant][weight];

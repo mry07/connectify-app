@@ -1,5 +1,5 @@
+import { FontWeight } from "./Text.types";
 import { PressableProps, StyleProp, ViewStyle } from "react-native";
-import { FontWeight } from "./text";
 
 export interface CustomizeButtonProps {
   containerStyle?: StyleProp<ViewStyle>;

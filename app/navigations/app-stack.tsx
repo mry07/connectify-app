@@ -51,7 +51,6 @@ const HomeTabScreen = () => {
     headerShown: false,
     tabBarActiveTintColor: Colors.p30,
     tabBarInactiveTintColor: Colors.p30 + Colors.o20,
-    unmountOnBlur: true,
   };
 
   return (
