@@ -16,10 +16,6 @@ import {
   Platform,
   Image,
 } from "react-native";
-import {
-  CommentsModalProps,
-  CustomBackdropProps,
-} from "../../../../../../@types/app/screens/app/bottom-tab/home/__modals__/comment-modal";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -36,6 +32,7 @@ import { MaterialIndicator } from "react-native-indicators";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { UserContext } from "../../../../../../contexts/user-context";
+import { CommentsModalProps, CustomBackdropProps } from "./CommentsModal.types";
 
 /** ********************************************************************** */
 
@@ -262,12 +259,11 @@ const CommentsModal = (props: CommentsModalProps) => {
               placeholder="Tulis komentar"
               value={comment}
               onChangeText={setComment}
-              iconRigth={({ style }) => (
-                <Pressable style={style} onPress={onSendComment}>
-                  <Common.Text weight="500" color={Colors.p30}>
-                    Kirim
-                  </Common.Text>
-                </Pressable>
+              onIconRightPress={onSendComment}
+              iconRight={() => (
+                <Common.Text weight="500" color={Colors.p30}>
+                  Kirim
+                </Common.Text>
               )}
             />
           </Animated.View>

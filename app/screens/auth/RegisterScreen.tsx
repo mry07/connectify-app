@@ -1,6 +1,10 @@
 import React from "react";
 import Colors from "../../constants/colors";
 import * as Common from "../../components/common";
+import { Form } from "./RegisterScreen.types";
+import { AuthContext } from "../../../contexts/auth-context";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   View,
   Alert,
@@ -10,10 +14,6 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import { Form } from "../../../@types/app/screens/auth/register-screen";
-import { AuthContext } from "../../../contexts/auth-context";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const RegisterScreen = ({ navigation }) => {
   const { register } = React.useContext(AuthContext);

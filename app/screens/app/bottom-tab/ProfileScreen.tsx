@@ -22,7 +22,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { abortSignal } from "../../../../utils/api";
 import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
-import CommentsModal from "./home/__modals__/CommentsModal";
+import CommentsModal from "./home/other/CommentsModal";
 import { FontWeight } from "../../../components/common/Text.types";
 
 const AVATAR_SIZE = WINDOW_WIDTH * 0.3;

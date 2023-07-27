@@ -1,6 +1,6 @@
 import React from "react";
 import Colors from "../../../constants/colors";
-import CommentsModal from "./home/__modals__/CommentsModal";
+import CommentsModal from "./home/other/CommentsModal";
 import * as Common from "../../../components/common";
 import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import { abortSignal } from "../../../../utils/api";
