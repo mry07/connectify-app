@@ -1,17 +1,11 @@
 import React from "react";
 import Colors from "../../constants/colors";
-import * as Common from "../../components/common";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { AuthContext } from "../../../contexts/auth-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  View,
-  Platform,
-  Pressable,
-  StyleSheet,
-  KeyboardAvoidingView,
-} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text, Input, Button } from "../../components";
+import { View, Platform, StyleSheet, KeyboardAvoidingView } from "react-native";
 
 const LoginScreen = ({ navigation }) => {
   const { login } = React.useContext(AuthContext);
@@ -44,13 +38,13 @@ const LoginScreen = ({ navigation }) => {
     >
       <View style={{ paddingTop: insets.top }}>
         <View style={styles.header}>
-          <Common.Text size={24} weight="700" color={Colors.p30}>
+          <Text size={24} weight="700" color={Colors.p30}>
             Login
-          </Common.Text>
+          </Text>
         </View>
       </View>
       <View style={styles.center}>
-        <Common.Input
+        <Input
           containerStyle={inputStyles.container}
           label="Email"
           placeholder="masukkan email kamu"
@@ -59,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
           keyboardType="email-address"
           onChangeText={setEmail}
         />
-        <Common.Input
+        <Input
           containerStyle={inputStyles.container}
           label="Password"
           placeholder="masukkan password kamu"
@@ -70,21 +64,21 @@ const LoginScreen = ({ navigation }) => {
           onIconRightPress={() => setSeePassword((s) => !s)}
           iconRight={iconEye}
         />
-        <Common.Button
+        <Button
           style={styles.button}
           title="Login"
           onPress={() => login(email, password)}
         />
-        <Common.Text style={styles.register}>
+        <Text style={styles.register}>
           Belum punya akun?{" "}
-          <Common.Text
+          <Text
             color={Colors.p30}
             weight="700"
             onPress={() => navigation.navigate("Register")}
           >
             Daftar
-          </Common.Text>
-        </Common.Text>
+          </Text>
+        </Text>
       </View>
     </KeyboardAvoidingView>
   );

@@ -1,10 +1,10 @@
 import React from "react";
 import Colors from "../../../constants/colors";
 import CommentsModal from "./home/other/CommentsModal";
-import * as Common from "../../../components/common";
 import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
 import { abortSignal } from "../../../../utils/api";
 import { UserContext } from "../../../../contexts/user-context";
+import { Text, Button } from "../../../components";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { MaterialIndicator } from "react-native-indicators";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -133,17 +133,17 @@ const HomeScreen = () => {
             <View style={postStyles.row}>
               <Image style={postStyles.avatar} source={{ uri }} />
               <View>
-                <Common.Text style={postStyles.name} size={14} weight="600">
+                <Text style={postStyles.name} size={14} weight="600">
                   {item.name}
-                </Common.Text>
-                <Common.Text style={postStyles.username} size={12}>
+                </Text>
+                <Text style={postStyles.username} size={12}>
                   @{item.username}
-                </Common.Text>
+                </Text>
               </View>
             </View>
 
             {item.user_id !== userDetails?.id && (
-              <Common.Button
+              <Button
                 style={[postStyles.buttonFollow, { borderColor: buttonColor }]}
                 title={buttonTitle}
                 size="small"
@@ -154,9 +154,7 @@ const HomeScreen = () => {
           </View>
 
           {!!item.post_content && (
-            <Common.Text style={postStyles.postContent}>
-              {item.post_content}
-            </Common.Text>
+            <Text style={postStyles.postContent}>{item.post_content}</Text>
           )}
 
           <PostImages data={item.post_images} measureLayout={measurePost} />
@@ -188,9 +186,9 @@ const HomeScreen = () => {
           />
         </View>
       ) : (
-        <Common.Text style={postStyles.empty} weight="500">
+        <Text style={postStyles.empty} weight="500">
           No Posts
-        </Common.Text>
+        </Text>
       )}
 
       <CommentsModal
@@ -212,12 +210,10 @@ const Header = () => {
     <View style={[headerStyles.container, { marginTop: insets.top }]}>
       <Image style={headerStyles.avatar} source={{ uri }} />
       <View>
-        <Common.Text style={headerStyles.name} size={18} weight="700">
+        <Text style={headerStyles.name} size={18} weight="700">
           Hi, {userDetails?.name.split(" ")[0]} 👋
-        </Common.Text>
-        <Common.Text style={headerStyles.username}>
-          @{userDetails?.username}
-        </Common.Text>
+        </Text>
+        <Text style={headerStyles.username}>@{userDetails?.username}</Text>
       </View>
     </View>
   );
@@ -415,9 +411,9 @@ const PostActions = ({ data, setData, onComment }) => {
           style={postActionStyles.likeDislike}
           onPress={() => onAction("dislike")}
         >
-          <Common.Text size={14} weight="600" color={active.dislikeColor}>
+          <Text size={14} weight="600" color={active.dislikeColor}>
             {data.dislikes}
-          </Common.Text>
+          </Text>
           <FontAwesomeIcon
             style={postActionStyles.likeDislikeCount}
             color={active.dislikeColor}
@@ -429,9 +425,9 @@ const PostActions = ({ data, setData, onComment }) => {
           style={postActionStyles.likeDislike}
           onPress={() => onAction("like")}
         >
-          <Common.Text size={14} weight="600" color={active.likeColor}>
+          <Text size={14} weight="600" color={active.likeColor}>
             {data.likes}
-          </Common.Text>
+          </Text>
           <FontAwesomeIcon
             style={postActionStyles.likeDislikeCount}
             color={active.likeColor}

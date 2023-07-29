@@ -1,10 +1,10 @@
 import React from "react";
 import Colors from "../../constants/colors";
-import * as Common from "../../components/common";
 import { Form } from "./RegisterScreen.types";
 import { AuthContext } from "../../../contexts/auth-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Text, Input, Button } from "../../components";
 import {
   View,
   Alert,
@@ -58,47 +58,43 @@ const RegisterScreen = ({ navigation }) => {
           <Pressable style={styles.back} onPress={navigation.goBack}>
             <FontAwesomeIcon size={20} icon={["fas", "arrow-left"]} />
           </Pressable>
-          <Common.Text size={24} weight="700" color={Colors.p30}>
+          <Text size={24} weight="700" color={Colors.p30}>
             Register
-          </Common.Text>
+          </Text>
         </View>
       </View>
       <ScrollView
         contentContainerStyle={styles.content}
         keyboardShouldPersistTaps="handled"
       >
-        <Common.Input
+        <Input
           containerStyle={inputStyles.container}
           label="Nama"
           placeholder="masukkan nama kamu"
           onChangeText={(v) => onChangeField("name", v)}
         />
-        <Common.Input
+        <Input
           containerStyle={inputStyles.container}
           label="Username"
           placeholder="masukkan username kamu"
           autoCapitalize="none"
           onChangeText={(v) => onChangeField("username", v)}
         />
-        <Common.Input
+        <Input
           containerStyle={inputStyles.container}
           label="Email"
           placeholder="masukkan email kamu"
           autoCapitalize="none"
           onChangeText={(v) => onChangeField("email", v)}
         />
-        <Common.Input
+        <Input
           containerStyle={inputStyles.container}
           label="Passoword"
           placeholder="masukkan password kamu"
           autoCapitalize="none"
           onChangeText={(v) => onChangeField("password", v)}
         />
-        <Common.Button
-          style={styles.button}
-          title="Register"
-          onPress={onSubmit}
-        />
+        <Button style={styles.button} title="Register" onPress={onSubmit} />
       </ScrollView>
     </KeyboardAvoidingView>
   );

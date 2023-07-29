@@ -21,6 +21,7 @@ export const Text = ({
   weight,
   variant,
   children,
+  ...props
 }: TextProps) => {
   const fontFamily = fonts[font][variant][weight];
 
@@ -39,7 +40,7 @@ export const Text = ({
     style,
   ];
 
-  return <RNText style={textStyle}>{children}</RNText>;
+  return <RNText {...props} style={textStyle}>{children}</RNText>;
 };
 
 Text.defaultProps = DEFAULT_PROPS;

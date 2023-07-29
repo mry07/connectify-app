@@ -4,7 +4,7 @@ import BottomSheet, {
   BottomSheetFlatList,
   BottomSheetTextInput,
 } from "@gorhom/bottom-sheet";
-import * as Common from "../../../../../components/common";
+import { Text, Input } from "../../../../../components";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   View,
@@ -196,13 +196,13 @@ const CommentsModal = (props: CommentsModalProps) => {
           source={{ uri }}
         />
         <View>
-          <Common.Text size={12} weight="500">
+          <Text size={12} weight="500">
             {item.name}{" "}
-            <Common.Text size={12} color={Colors.p101 + Colors.o50}>
+            <Text size={12} color={Colors.p101 + Colors.o50}>
               @{item.username}
-            </Common.Text>
-          </Common.Text>
-          <Common.Text>{item.comment}</Common.Text>
+            </Text>
+          </Text>
+          <Text>{item.comment}</Text>
         </View>
       </View>
     );
@@ -242,7 +242,7 @@ const CommentsModal = (props: CommentsModalProps) => {
               />
             ) : (
               <View style={listStyles.empty}>
-                <Common.Text>Belum ada komentar</Common.Text>
+                <Text>Belum ada komentar</Text>
               </View>
             )}
           </View>
@@ -254,16 +254,16 @@ const CommentsModal = (props: CommentsModalProps) => {
         >
           <Animated.View style={animatedStyles} onLayout={onLayoutInput}>
             <View style={styles.divider} />
-            <Common.Input
+            <Input
               ref={inputRef}
               placeholder="Tulis komentar"
               value={comment}
               onChangeText={setComment}
               onIconRightPress={onSendComment}
               iconRight={() => (
-                <Common.Text weight="500" color={Colors.p30}>
+                <Text weight="500" color={Colors.p30}>
                   Kirim
-                </Common.Text>
+                </Text>
               )}
             />
           </Animated.View>

@@ -1,21 +1,18 @@
 import React from "react";
 import Colors from "../../constants/colors";
-import * as Common from "../../components/common";
 import * as ImagePicker from "expo-image-picker";
-import * as MediaLibrary from "expo-media-library";
-import * as ImageManipulator from "expo-image-manipulator";
-import { Camera } from "expo-camera";
+import { Button } from "../../components";
 import { UserContext } from "../../../contexts/user-context";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   View,
   Image,
+  Alert,
+  FlatList,
   TextInput,
   Pressable,
   StyleSheet,
   ScrollView,
-  FlatList,
-  Alert,
 } from "react-native";
 // import { FlashList } from "@shopify/flash-list";
 
@@ -152,7 +149,7 @@ const NewPostScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Common.Button
+        <Button
           style={styles.close}
           size="small"
           onPress={navigation.goBack}
@@ -164,7 +161,7 @@ const NewPostScreen = ({ navigation }) => {
             />
           )}
         />
-        <Common.Button
+        <Button
           style={styles.post}
           title="Posting"
           size="small"
@@ -193,7 +190,7 @@ const NewPostScreen = ({ navigation }) => {
 
       <View style={styles.buttonUploadContainer}>
         {permissions.camera && (
-          <Common.Button
+          <Button
             style={styles.buttonUpload}
             size="large"
             onPress={pickImageWithCamera}
@@ -208,7 +205,7 @@ const NewPostScreen = ({ navigation }) => {
         )}
 
         {permissions.mediaLibrary && (
-          <Common.Button
+          <Button
             style={styles.buttonUpload}
             size="large"
             onPress={pickImageWithGallery}

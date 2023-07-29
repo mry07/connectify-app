@@ -1,18 +1,15 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Image,
-  FlatList,
-} from "react-native";
 import React from "react";
 import Colors from "../../../constants/colors";
-import * as Common from "../../../components/common";
+import CommentsModal from "./home/other/CommentsModal";
+import { Text } from "../../../components";
+import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
+import { FontWeight } from "../../../components/common/Text.types";
+import { abortSignal } from "../../../../utils/api";
 import { AuthContext } from "../../../../contexts/auth-context";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { UserContext } from "../../../../contexts/user-context";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View, Image, FlatList, Pressable, StyleSheet } from "react-native";
 import Animated, {
   interpolate,
   useSharedValue,
@@ -20,10 +17,6 @@ import Animated, {
   useAnimatedStyle,
   useAnimatedScrollHandler,
 } from "react-native-reanimated";
-import { abortSignal } from "../../../../utils/api";
-import { IconPrefix } from "@fortawesome/fontawesome-svg-core";
-import CommentsModal from "./home/other/CommentsModal";
-import { FontWeight } from "../../../components/common/Text.types";
 
 const AVATAR_SIZE = WINDOW_WIDTH * 0.3;
 const BUTTON_LOGOUT = 46;
@@ -78,9 +71,9 @@ const ProfileScreen = () => {
           }}
         />
 
-        <Common.Text align="center" size={20} weight="600">
+        <Text align="center" size={20} weight="600">
           @{userDetails.username}
-        </Common.Text>
+        </Text>
 
         <View
           style={{
@@ -90,40 +83,28 @@ const ProfileScreen = () => {
           }}
         >
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Common.Text size={16} weight="600">
+            <Text size={16} weight="600">
               {userDetails.following}
-            </Common.Text>
-            <Common.Text
-              size={12}
-              weight="500"
-              color={Colors.p101 + Colors.o50}
-            >
+            </Text>
+            <Text size={12} weight="500" color={Colors.p101 + Colors.o50}>
               Mengikuti
-            </Common.Text>
+            </Text>
           </View>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Common.Text size={16} weight="600">
+            <Text size={16} weight="600">
               {userDetails.followers}
-            </Common.Text>
-            <Common.Text
-              size={12}
-              weight="500"
-              color={Colors.p101 + Colors.o50}
-            >
+            </Text>
+            <Text size={12} weight="500" color={Colors.p101 + Colors.o50}>
               Pengikut
-            </Common.Text>
+            </Text>
           </View>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Common.Text size={16} weight="600">
+            <Text size={16} weight="600">
               {userDetails.posts}
-            </Common.Text>
-            <Common.Text
-              size={12}
-              weight="500"
-              color={Colors.p101 + Colors.o50}
-            >
+            </Text>
+            <Text size={12} weight="500" color={Colors.p101 + Colors.o50}>
               Posting
-            </Common.Text>
+            </Text>
           </View>
         </View>
       </View>
@@ -146,20 +127,18 @@ const ProfileScreen = () => {
             <View style={postStyles.row}>
               <Image style={postStyles.avatar} source={{ uri }} />
               <View>
-                <Common.Text style={postStyles.name} size={14} weight="600">
+                <Text style={postStyles.name} size={14} weight="600">
                   {item.name}
-                </Common.Text>
-                <Common.Text style={postStyles.username} size={12}>
+                </Text>
+                <Text style={postStyles.username} size={12}>
                   @{item.username}
-                </Common.Text>
+                </Text>
               </View>
             </View>
           </View>
 
           {!!item.post_content && (
-            <Common.Text style={postStyles.postContent}>
-              {item.post_content}
-            </Common.Text>
+            <Text style={postStyles.postContent}>{item.post_content}</Text>
           )}
 
           <PostImages data={item.post_images} measureLayout={measurePost} />
@@ -187,9 +166,9 @@ const ProfileScreen = () => {
           marginTop: insets.top,
         }}
       >
-        <Common.Text size={18} weight="700">
+        <Text size={18} weight="700">
           User Test
-        </Common.Text>
+        </Text>
         <Pressable
           style={{
             backgroundColor: Colors.red400 + Colors.o15,
@@ -417,9 +396,9 @@ const PostActions = ({ data, setData, onComment }) => {
           style={postActionStyles.likeDislike}
           onPress={() => onAction("dislike")}
         >
-          <Common.Text size={14} weight="600" color={active.dislikeColor}>
+          <Text size={14} weight="600" color={active.dislikeColor}>
             {data.dislikes}
-          </Common.Text>
+          </Text>
           <FontAwesomeIcon
             style={postActionStyles.likeDislikeCount}
             color={active.dislikeColor}
@@ -431,9 +410,9 @@ const PostActions = ({ data, setData, onComment }) => {
           style={postActionStyles.likeDislike}
           onPress={() => onAction("like")}
         >
-          <Common.Text size={14} weight="600" color={active.likeColor}>
+          <Text size={14} weight="600" color={active.likeColor}>
             {data.likes}
-          </Common.Text>
+          </Text>
           <FontAwesomeIcon
             style={postActionStyles.likeDislikeCount}
             color={active.likeColor}
