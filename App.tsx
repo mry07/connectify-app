@@ -1,4 +1,4 @@
-import "./globals";
+import "./global";
 import "react-native-gesture-handler";
 import Api from "./services/api";
 import App from "./app/index";
